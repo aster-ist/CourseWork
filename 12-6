@@ -1,0 +1,65 @@
+def loadResults():
+    """Load file and return the runners' data"""
+    try:
+        myFile = open("marathon_3.csv")
+        race = []
+        for line in myFile:
+            data = line.split(',')
+            runner = {}
+            runner["number"] = data[0]
+            runner["time"] = data[1]
+            runner["name"] = data[2]
+            runner["surname"] = data[3].rstrip('\n')
+            race.append(runner)
+    except Exception as error:
+        print(error)
+        race = []
+    finally:
+        if "myFile" in locals():
+            myFile.close()
+        return race
+
+def displayTime(race, number):
+    """Display time of the runner by the the runner number"""
+    i = 0
+    #Terminate while loop when found the runner number
+    while len(race) > i and int(race[i]["number"]) != number :
+        i += 1
+    if len(race) == i:
+        print("Runner not found")
+    else:
+        print(race[i]["name"],
+              race[i]["surname"],
+              race[i]["time"])
+
+def displayUnder2(race):
+    """Display all of the runners' information under 2 hours"""
+    for runner in race:
+        if runner["time"] < "02:00:00":
+            print(runner['name'],
+                  runner['surname'],
+                  runner['time'])
+
+def getResults(race): # Insertion sort
+    """Make the runners list sorted"""
+    i = 1
+    while i < len(race):
+        x = race[i]
+        j = i
+        while j > 0 and race[j-1]['time'] > x['time']:
+            race[j] =race[j-1] # budge up
+            j = j - 1
+        assert j <= 0 or race[j-1]['time'] <= x['time']
+        race[j] = x
+        i += 1
+    return race
+
+#main program
+marathon = loadResults()
+displayTime(marathon, 1241)
+displayUnder2(marathon)
+results = getResults(marathon)
+print("The winner is",
+      results[0]['name'],
+      results[0]['surname'],
+      results[0]['time'])
